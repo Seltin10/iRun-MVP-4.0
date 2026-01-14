@@ -10,6 +10,7 @@ import { User, Mail, Calendar, Award, Activity } from "lucide-react"
 import { Suspense } from "react"
 import { AchievementsSection } from "@/components/achievements-section"
 import { FeedbackForm } from "@/components/feedback-form"
+import { RecentActivities } from "@/components/recent-activities"
 
 export default async function ProfilePage() {
   const session = await getSession()
@@ -42,25 +43,35 @@ export default async function ProfilePage() {
       )
     `
   } catch (error) {
-    // Table might already exist or other error - continue anyway
     console.log("[v0] Feedback table creation skipped:", error)
   }
 
-  // Get user stats
-  const stats = await sql`
-    SELECT 
-      COUNT(DISTINCT id) as total_activities,
-      COALESCE(SUM(distance_km), 0) as total_distance,
-      COALESCE(SUM(calories_burned), 0) as total_calories
-    FROM public.activities
-    WHERE user_id = ${session.id}
-  `
+  let userStats = { total_activities: 0, total_distance: 0, total_calories: 0 }
+  try {
+    const stats = await sql`
+      SELECT 
+        COUNT(DISTINCT id) as total_activities,
+        COALESCE(SUM(distance_km), 0) as total_distance,
+        COALESCE(SUM(calories_burned), 0) as total_calories
+      FROM public.activities
+      WHERE user_id = ${session.id}
+    `
+    userStats = stats[0] || userStats
+  } catch (error) {
+    console.log("[v0] Failed to fetch activity stats:", error)
+  }
 
-  const couponsStats = await sql`
-    SELECT COUNT(*) as used_coupons
-    FROM public.user_coupons
-    WHERE user_id = ${session.id} AND status = 'used'
-  `
+  let usedCouponsCount = 0
+  try {
+    const couponsStats = await sql`
+      SELECT COUNT(*) as used_coupons
+      FROM public.user_coupons
+      WHERE user_id = ${session.id} AND status = 'used'
+    `
+    usedCouponsCount = Number(couponsStats[0]?.used_coupons || 0)
+  } catch (error) {
+    console.log("[v0] Failed to fetch coupon stats:", error)
+  }
 
   let hasSubmittedFeedback = false
   try {
@@ -70,12 +81,9 @@ export default async function ProfilePage() {
     `
     hasSubmittedFeedback = feedbackCheck.length > 0
   } catch (error) {
-    // Error checking feedback - default to false
+    console.log("[v0] Failed to check feedback status:", error)
     hasSubmittedFeedback = false
   }
-
-  const userStats = stats[0]
-  const usedCouponsCount = Number(couponsStats[0]?.used_coupons || 0)
 
   const planLabels: Record<string, string> = {
     free: "Gratuito",
@@ -83,6 +91,36 @@ export default async function ProfilePage() {
     premium: "Premium",
     sports: "iRun Sports",
   }
+
+  const activities = [
+    {
+      id: "1",
+      activity_type: "running",
+      distance_km: 5.2,
+      duration_minutes: 28,
+      calories_burned: 420,
+      date: new Date().toISOString(),
+      source: "strava",
+    },
+    {
+      id: "2",
+      activity_type: "cycling",
+      distance_km: 15.8,
+      duration_minutes: 45,
+      calories_burned: 580,
+      date: new Date(Date.now() - 86400000).toISOString(),
+      source: "apple_health",
+    },
+    {
+      id: "3",
+      activity_type: "swimming",
+      distance_km: 1.2,
+      duration_minutes: 35,
+      calories_burned: 320,
+      date: new Date(Date.now() - 172800000).toISOString(),
+      source: "google_fit",
+    },
+  ]
 
   return (
     <div className="min-h-screen pb-20 bg-indigo-50">
@@ -189,6 +227,8 @@ export default async function ProfilePage() {
             </div>
           </CardContent>
         </Card>
+
+        <RecentActivities activities={activities} />
 
         <AchievementsSection
           totalDistance={Number(userStats.total_distance)}

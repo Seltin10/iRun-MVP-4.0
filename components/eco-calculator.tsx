@@ -62,7 +62,7 @@ export function EcoCalculator({ totalRunning, totalCycling }: EcoCalculatorProps
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Leaf className="h-5 w-5 text-green-600" />
-            <CardTitle className="text-green-900">iRun ECO+</CardTitle>
+            <CardTitle className="text-green-900">iRun Eco+</CardTitle>
           </div>
           <Dialog>
             <DialogTrigger asChild>

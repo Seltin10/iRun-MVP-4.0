@@ -1,12 +1,13 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { DollarSign, Ticket, Store } from "lucide-react"
+import { DollarSign, Ticket, Store, Clock } from "lucide-react"
 
 interface RewardStats {
   totalSavings: number
   usedCoupons: number
   preferredPartner: string | null
+  activityDays?: number
 }
 
 export function RewardStatsCards({ stats }: { stats: RewardStats }) {
@@ -29,10 +30,16 @@ export function RewardStatsCards({ stats }: { stats: RewardStats }) {
       icon: Store,
       description: "Mais utilizada",
     },
+    {
+      title: "TEMPO DE ATIVIDADE",
+      value: `${stats.activityDays || 0} horas`,
+      icon: Clock,
+      description: "Membro da plataforma",
+    },
   ]
 
   return (
-    <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
+    <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
       {cards.map((card) => {
         const Icon = card.icon
         return (

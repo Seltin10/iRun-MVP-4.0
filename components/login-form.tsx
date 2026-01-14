@@ -11,10 +11,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import Link from "next/link"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 export function LoginForm() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -23,15 +25,16 @@ export function LoginForm() {
 
     console.log("[v0] Form submitted")
 
-    try {
-      const formData = new FormData(e.currentTarget)
-      await signIn(formData)
-    } catch (error) {
-      console.log("[v0] Login error:", error)
-      if (error instanceof Error && !error.message.includes("NEXT_REDIRECT")) {
-        setError("Erro ao fazer login")
-        setLoading(false)
-      }
+    const formData = new FormData(e.currentTarget)
+    const result = await signIn(formData)
+
+    if (result?.error) {
+      setError(result.error)
+      setLoading(false)
+    } else if (result?.success) {
+      console.log("[v0] Login successful, redirecting...")
+      // Use window.location for hard navigation to ensure cookies are sent
+      window.location.href = "/dashboard"
     }
   }
 

@@ -49,21 +49,22 @@ export async function signIn(formData: FormData) {
     return { error: "Email e senha são obrigatórios" }
   }
 
+  const user = {
+    id: `user-${Date.now()}`,
+    email: email,
+    name: email.split("@")[0],
+    plan_type: "premium",
+    lgpd_consent: true,
+  }
+
+  console.log("[v0] Creating session for user:", user)
+
   try {
-    const user = {
-      id: `user-${Date.now()}`,
-      email: email,
-      name: email.split("@")[0],
-      plan_type: "premium",
-      lgpd_consent: true,
-    }
-
-    console.log("[v0] Creating session for user:", user)
-
     const cookieStore = await cookies()
+
     cookieStore.set("user_session", JSON.stringify(user), {
       httpOnly: true,
-      secure: false, // Set to false for development
+      secure: false,
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7,
       path: "/",
@@ -72,14 +73,11 @@ export async function signIn(formData: FormData) {
     console.log("[v0] Cookie set successfully")
 
     const verifySession = cookieStore.get("user_session")
-    console.log("[v0] Verification - Cookie exists:", !!verifySession)
+    console.log("[v0] Verification - Cookie value:", verifySession?.value)
 
-    redirect("/dashboard")
+    return { success: true, user }
   } catch (error) {
-    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
-      throw error
-    }
-    console.error("[v0] Signin error:", error)
+    console.error("[v0] SignIn error:", error)
     return { error: "Erro ao fazer login" }
   }
 }

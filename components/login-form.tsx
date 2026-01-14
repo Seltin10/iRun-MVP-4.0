@@ -33,8 +33,7 @@ export function LoginForm() {
       setLoading(false)
     } else if (result?.success) {
       console.log("[v0] Login successful, redirecting...")
-      // Use window.location for hard navigation to ensure cookies are sent
-      window.location.href = "/dashboard"
+      router.push("/dashboard")
     }
   }
 

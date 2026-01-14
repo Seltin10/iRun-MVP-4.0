@@ -33,6 +33,7 @@ export function LoginForm() {
       setLoading(false)
     } else if (result?.success) {
       console.log("[v0] Login successful, redirecting...")
+      await new Promise((resolve) => setTimeout(resolve, 500))
       router.push("/dashboard")
     }
   }

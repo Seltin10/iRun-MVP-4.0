@@ -6,10 +6,8 @@ import { BottomNav } from "@/components/bottom-nav"
 import { PartnerAdsBanner } from "@/components/partner-ads-banner"
 import { RewardStatsCards } from "@/components/reward-stats-cards"
 import { EcoCalculator } from "@/components/eco-calculator"
-import { getRewardStats } from "@/lib/reward-stats"
+import { getRewardStats } from "@/lib/reward-stats" // Import reward stats function
 import { WHOActivityClassification } from "@/components/who-activity-classification"
-import { QuestCard } from "@/components/quest-card"
-import { Flame, Clock, Map } from "lucide-react"
 
 export default async function DashboardPage() {
   const session = await getSession()
@@ -93,62 +91,8 @@ export default async function DashboardPage() {
 
   const rewardStats = await getRewardStats(session.id)
 
-  const bronzeQuestOptions = [
-    {
-      id: "option-a",
-      label: "Queimar 300 Kcal (Qualquer esporte)",
-      icon: Flame,
-    },
-    {
-      id: "option-b",
-      label: "40 min de Atividade",
-      icon: Clock,
-    },
-    {
-      id: "option-c",
-      label: "5 km Corrida / 15 km Bike",
-      icon: Map,
-    },
-  ]
-
-  const silverQuestOptions = [
-    {
-      id: "option-a",
-      label: "Queimar 600 Kcal (Qualquer esporte)",
-      icon: Flame,
-    },
-    {
-      id: "option-b",
-      label: "1h 20min de Atividade",
-      icon: Clock,
-    },
-    {
-      id: "option-c",
-      label: "10 km Corrida / 30 km Bike",
-      icon: Map,
-    },
-  ]
-
-  const goldQuestOptions = [
-    {
-      id: "option-a",
-      label: "Queimar 1000 Kcal (Qualquer esporte)",
-      icon: Flame,
-    },
-    {
-      id: "option-b",
-      label: "2h de Atividade",
-      icon: Clock,
-    },
-    {
-      id: "option-c",
-      label: "2km Corrida - Caminhada - 25km Bike - 2000m Natação",
-      icon: Map,
-    },
-  ]
-
   return (
-    <div className="min-h-screen pb-20 bg-slate-50">
+    <div className="min-h-screen pb-20 bg-indigo-50">
       <DashboardHeader user={session} />
       <main className="container mx-auto px-3 py-4 sm:px-4 sm:py-6 space-y-6">
         <div className="pt-2">
@@ -159,40 +103,11 @@ export default async function DashboardPage() {
 
         <PartnerAdsBanner partners={partners} />
 
-        <div className="space-y-4">
-          <div>
-            <h1 className="sm:text-2xl mb-1 text-xl leading-5 font-normal">Minhas Metas</h1>
-            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              Complete desafios diários e ganhe recompensas
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <QuestCard
-              title="Desafio Bronze - Movimente-se"
-              tier="bronze"
-              badgeText="XP em dobro"
-              reward="Cupom 15% OFF"
-              options={bronzeQuestOptions}
-              defaultOption="option-b"
-            />
-
-            <QuestCard
-              title="Desafio Prata - Superação"
-              tier="silver"
-              badgeText="Desafiador"
-              reward="Cupom 25% OFF"
-              options={silverQuestOptions}
-            />
-
-            <QuestCard
-              title="Desafio Ouro - Elite"
-              tier="gold"
-              badgeText="Lendário"
-              reward="Cupom 40% OFF"
-              options={goldQuestOptions}
-            />
-          </div>
+        <div>
+          <h1 className="sm:text-2xl mb-1 text-xl leading-5 font-normal">Minhas Metas</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            Sincronizado via Apple Health, Google Fit e Strava
+          </p>
         </div>
 
         <StatsCards stats={goalStats} />

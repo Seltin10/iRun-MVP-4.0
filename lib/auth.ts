@@ -22,11 +22,11 @@ export async function signUp(formData: FormData) {
       lgpd_consent: false,
     }
 
+    // Set session cookie
     const cookieStore = await cookies()
     cookieStore.set("user_session", JSON.stringify(user), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7, // 7 days
       path: "/",
     })
@@ -64,14 +64,16 @@ export async function signIn(formData: FormData) {
 
     cookieStore.set("user_session", JSON.stringify(user), {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7,
       path: "/",
     })
 
     console.log("[v0] Cookie set successfully")
-    console.log("[v0] User authenticated:", user.email)
+
+    const verifySession = cookieStore.get("user_session")
+    console.log("[v0] Verification - Cookie value:", verifySession?.value)
 
     return { success: true, user }
   } catch (error) {

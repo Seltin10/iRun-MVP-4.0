@@ -45,12 +45,12 @@ export default async function HomePage() {
             {""}
           </p>
           <div className="flex gap-4 mt-8">
-            <Button asChild size="lg" variant="secondary">
+            <Button asChild size="md" variant="secondary">
               <Link href="/signup">Começar Agora</Link>
             </Button>
             <Button
               asChild
-              size="lg"
+              size="md"
               variant="outline"
               className="bg-white/10 text-white border-white/20 hover:bg-white/20"
             >

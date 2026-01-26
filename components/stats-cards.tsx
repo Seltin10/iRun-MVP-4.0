@@ -56,47 +56,47 @@ export function StatsCards({ stats }: { stats: Stats }) {
   }
 
   const createEffortEquivalenceContent = (runDistance: string, bikeDistance: string, swimDistance: string) => (
-    <div className="flex items-center justify-between gap-3">
+    <div className="flex items-center justify-center gap-2 sm:gap-4">
       <button
         onClick={() => setSelectedSport("running")}
-        className={`flex flex-col items-center gap-2 flex-1 p-3 rounded-lg transition-all ${
+        className={`flex flex-col items-center gap-2 p-2 sm:p-3 rounded-lg transition-all ${
           selectedSport === "running"
             ? "bg-blue-100 border-2 border-blue-600"
             : "bg-white border-2 border-transparent hover:bg-gray-50"
         }`}
       >
-        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-          <Footprints className="h-6 w-6 text-blue-600" />
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-100 flex items-center justify-center">
+          <Footprints className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
         </div>
-        <span className="text-sm font-semibold text-gray-800">{runDistance}</span>
+        <span className="text-xs sm:text-sm font-semibold text-gray-800">{runDistance}</span>
       </button>
       <div className="text-xs font-medium text-gray-400 pb-6">OU</div>
       <button
         onClick={() => setSelectedSport("cycling")}
-        className={`flex flex-col items-center gap-2 flex-1 p-3 rounded-lg transition-all ${
+        className={`flex flex-col items-center gap-2 p-2 sm:p-3 rounded-lg transition-all ${
           selectedSport === "cycling"
             ? "bg-green-100 border-2 border-green-600"
             : "bg-white border-2 border-transparent hover:bg-gray-50"
         }`}
       >
-        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-          <Bike className="h-6 w-6 text-green-600" />
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-100 flex items-center justify-center">
+          <Bike className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
         </div>
-        <span className="text-sm font-semibold text-gray-800">{bikeDistance}</span>
+        <span className="text-xs sm:text-sm font-semibold text-gray-800">{bikeDistance}</span>
       </button>
       <div className="text-xs font-medium text-gray-400 pb-6">OU</div>
       <button
         onClick={() => setSelectedSport("swimming")}
-        className={`flex flex-col items-center gap-2 flex-1 p-3 rounded-lg transition-all ${
+        className={`flex flex-col items-center gap-2 p-2 sm:p-3 rounded-lg transition-all ${
           selectedSport === "swimming"
             ? "bg-cyan-100 border-2 border-cyan-600"
             : "bg-white border-2 border-transparent hover:bg-gray-50"
         }`}
       >
-        <div className="w-12 h-12 rounded-full bg-cyan-100 flex items-center justify-center">
-          <Waves className="h-6 w-6 text-cyan-600" />
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-cyan-100 flex items-center justify-center">
+          <Waves className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-600" />
         </div>
-        <span className="text-sm font-semibold text-gray-800">{swimDistance}</span>
+        <span className="text-xs sm:text-sm font-semibold text-gray-800">{swimDistance}</span>
       </button>
     </div>
   )
@@ -108,47 +108,47 @@ export function StatsCards({ stats }: { stats: Stats }) {
     progress: number,
   ) => (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-center gap-2 sm:gap-4">
         <button
           onClick={() => setSelectedSport("running")}
-          className={`flex flex-col items-center gap-2 flex-1 p-3 rounded-lg transition-all ${
+          className={`flex flex-col items-center gap-2 p-2 sm:p-3 rounded-lg transition-all ${
             selectedSport === "running"
               ? "bg-blue-100 border-2 border-blue-600"
               : "bg-white border-2 border-transparent hover:bg-gray-50"
           }`}
         >
-          <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-            <Footprints className="h-6 w-6 text-blue-600" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-100 flex items-center justify-center">
+            <Footprints className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
           </div>
-          <span className="text-sm font-semibold text-gray-800">{runDistance}</span>
+          <span className="text-xs sm:text-sm font-semibold text-gray-800">{runDistance}</span>
         </button>
         <div className="text-xs font-medium text-gray-400 pb-6">OU</div>
         <button
           onClick={() => setSelectedSport("cycling")}
-          className={`flex flex-col items-center gap-2 flex-1 p-3 rounded-lg transition-all ${
+          className={`flex flex-col items-center gap-2 p-2 sm:p-3 rounded-lg transition-all ${
             selectedSport === "cycling"
               ? "bg-green-100 border-2 border-green-600"
               : "bg-white border-2 border-transparent hover:bg-gray-50"
           }`}
         >
-          <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-            <Bike className="h-6 w-6 text-green-600" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-100 flex items-center justify-center">
+            <Bike className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
           </div>
-          <span className="text-sm font-semibold text-gray-800">{bikeDistance}</span>
+          <span className="text-xs sm:text-sm font-semibold text-gray-800">{bikeDistance}</span>
         </button>
         <div className="text-xs font-medium text-gray-400 pb-6">OU</div>
         <button
           onClick={() => setSelectedSport("swimming")}
-          className={`flex flex-col items-center gap-2 flex-1 p-3 rounded-lg transition-all ${
+          className={`flex flex-col items-center gap-2 p-2 sm:p-3 rounded-lg transition-all ${
             selectedSport === "swimming"
               ? "bg-cyan-100 border-2 border-cyan-600"
               : "bg-white border-2 border-transparent hover:bg-gray-50"
           }`}
         >
-          <div className="w-12 h-12 rounded-full bg-cyan-100 flex items-center justify-center">
-            <Waves className="h-6 w-6 text-cyan-600" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-cyan-100 flex items-center justify-center">
+            <Waves className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-600" />
           </div>
-          <span className="text-sm font-semibold text-gray-800">{swimDistance}</span>
+          <span className="text-xs sm:text-sm font-semibold text-gray-800">{swimDistance}</span>
         </button>
       </div>
       <button

@@ -326,7 +326,7 @@ export function StatsCards({ stats }: { stats: Stats }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 justify-center overflow-x-auto pb-2">
+      <div className="flex gap-2 justify-center items-center w-full pb-2">
         {(["superacao", "energia", "foco"] as const).map((category) => {
           const Icon = categoryIcons[category]
           return (

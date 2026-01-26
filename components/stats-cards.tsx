@@ -326,24 +326,26 @@ export function StatsCards({ stats }: { stats: Stats }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 justify-center items-center w-full pb-2">
-        {(["superacao", "energia", "foco"] as const).map((category) => {
-          const Icon = categoryIcons[category]
-          return (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm transition-all whitespace-nowrap ${
-                selectedCategory === category
-                  ? "bg-blue-600 text-white shadow-lg"
-                  : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"
-              }`}
-            >
-              <Icon className="h-4 w-4" />
-              {categoryLabels[category]}
-            </button>
-          )
-        })}
+      <div className="flex justify-center items-center w-full pb-2 px-2">
+        <div className="flex gap-1 sm:gap-2">
+          {(["superacao", "energia", "foco"] as const).map((category) => {
+            const Icon = categoryIcons[category]
+            return (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`flex items-center justify-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full font-medium text-xs sm:text-sm transition-all ${
+                  selectedCategory === category
+                    ? "bg-blue-600 text-white shadow-lg"
+                    : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                <span>{categoryLabels[category]}</span>
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       <div className="space-y-4 transition-all duration-300 ease-in-out">

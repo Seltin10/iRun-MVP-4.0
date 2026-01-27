@@ -37,7 +37,7 @@ export function WHOActivityClassification({ activities }: Props) {
             <div>
               <div className="text-blue-600 mb-1 text-2xl font-bold">iRun Life+</div>
               <CardTitle className="text-xl sm:text-2xl">Classificação de Atividade Física</CardTitle>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mt-1">
+              <p className="sm:text-sm text-muted-foreground leading-relaxed mt-1 font-medium text-sm">
                 Seu nível de atividade conforme recomendações da Organização Mundial da Saúde (OMS)
               </p>
             </div>

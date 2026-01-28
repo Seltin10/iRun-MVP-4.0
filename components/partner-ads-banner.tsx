@@ -47,15 +47,16 @@ export function PartnerAdsBanner({ partners }: PartnerAdsBannerProps) {
 
   return (
     <div className="relative w-full bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-lg overflow-hidden shadow-sm border border-blue-100 dark:border-blue-900">
-      <div className="relative h-32 sm:h-40 flex items-center justify-center p-4">
+      <div className="relative h-40 sm:h-48 md:h-56 flex items-center justify-center">
         {/* Partner Logo/Image */}
-        <div className="relative w-full h-full flex items-center justify-center">
+        <div className="relative w-full h-full">
           {currentPartner.logo_url && !hasImageError ? (
             <Image
               src={currentPartner.logo_url || "/placeholder.svg"}
               alt={`${currentPartner.name} - Parceiro iRun`}
               fill
-              className="object-contain"
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
               priority
               unoptimized
               onError={() => {

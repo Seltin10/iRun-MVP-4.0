@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Bike, Waves, Trophy, TrendingUp, Flame, Timer, Lock, Footprints } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 interface Stats {
   total_running: number
@@ -40,6 +41,7 @@ interface GoalCard {
 }
 
 export function StatsCards({ stats }: { stats: Stats }) {
+  const router = useRouter()
   const [selectedCategory, setSelectedCategory] = useState<"superacao" | "energia" | "foco">("superacao")
   const [selectedSport, setSelectedSport] = useState<"running" | "cycling" | "swimming">("running")
 
@@ -153,6 +155,7 @@ export function StatsCards({ stats }: { stats: Stats }) {
       </div>
       <button
         disabled={progress < 100}
+        onClick={() => progress === 100 && router.push("/partners")}
         className={`w-full py-3 px-4 rounded-lg font-semibold text-sm transition-all ${
           progress === 100
             ? "bg-amber-400 text-gray-900 hover:bg-amber-500 cursor-pointer"
@@ -167,6 +170,7 @@ export function StatsCards({ stats }: { stats: Stats }) {
   const createRedemptionButton = (progress: number) => (
     <button
       disabled={progress < 100}
+      onClick={() => progress === 100 && router.push("/partners")}
       className={`w-full py-3 px-4 rounded-lg font-semibold text-sm transition-all ${
         progress === 100
           ? "bg-amber-400 text-gray-900 hover:bg-amber-500 cursor-pointer"

@@ -194,7 +194,7 @@ export function StatsCards({ stats }: { stats: Stats }) {
             trophyColor: "text-amber-800",
             bottomTitle: "Equivalência de Esforço",
             bottomContent: createEffortEquivalenceWithButton(
-              "3km",
+              "2km",
               "10km",
               "1km",
               Math.min((currentDistance / 5) * 100, 100),
@@ -208,7 +208,7 @@ export function StatsCards({ stats }: { stats: Stats }) {
             trophyColor: "text-gray-400",
             bottomTitle: "Equivalência de Esforço",
             bottomContent: createEffortEquivalenceWithButton(
-              "6km",
+              "5km",
               "20km",
               "2km",
               Math.min((currentDistance / 6) * 100, 100),

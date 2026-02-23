@@ -39,6 +39,7 @@ export function LoginForm() {
         setError(result.error)
         setLoading(false)
       } else if (result?.success) {
+        router.refresh()
         router.push("/dashboard")
       }
     } catch {

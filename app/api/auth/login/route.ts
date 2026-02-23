@@ -1,4 +1,3 @@
-import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
@@ -16,8 +15,9 @@ export async function POST(request: Request) {
     lgpd_consent: true,
   }
 
-  const cookieStore = await cookies()
-  cookieStore.set("user_session", JSON.stringify(user), {
+  const response = NextResponse.json({ success: true, user })
+
+  response.cookies.set("user_session", JSON.stringify(user), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -25,5 +25,5 @@ export async function POST(request: Request) {
     path: "/",
   })
 
-  return NextResponse.json({ success: true, user })
+  return response
 }

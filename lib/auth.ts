@@ -1,9 +1,8 @@
-"use server"
-
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
 export async function signUp(formData: FormData) {
+  "use server"
   const email = formData.get("email") as string
   const password = formData.get("password") as string
   const name = formData.get("name") as string
@@ -39,6 +38,7 @@ export async function signUp(formData: FormData) {
 }
 
 export async function signIn(formData: FormData) {
+  "use server"
   const email = formData.get("email") as string
   const password = formData.get("password") as string
 
@@ -64,7 +64,7 @@ export async function signIn(formData: FormData) {
 
     cookieStore.set("user_session", JSON.stringify(user), {
       httpOnly: true,
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7,
       path: "/",
@@ -83,6 +83,7 @@ export async function signIn(formData: FormData) {
 }
 
 export async function signOut() {
+  "use server"
   const cookieStore = await cookies()
   cookieStore.delete("user_session")
   redirect("/login")
@@ -108,6 +109,7 @@ export async function getSession() {
 }
 
 export async function updateLGPDConsent(userId: string, consent: boolean) {
+  "use server"
   try {
     console.log("[v0] LGPD consent updated for user:", userId)
     return { success: true }

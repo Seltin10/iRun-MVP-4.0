@@ -2,6 +2,7 @@ import { getSession } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { StatsCards } from "@/components/stats-cards"
+import { RecentActivities } from "@/components/recent-activities"
 import { BottomNav } from "@/components/bottom-nav"
 import { PartnerAdsBanner } from "@/components/partner-ads-banner"
 import { RewardStatsCards } from "@/components/reward-stats-cards"
@@ -111,6 +112,8 @@ export default async function DashboardPage() {
         </div>
 
         <StatsCards stats={goalStats} />
+
+        <RecentActivities activities={activities} />
 
         <WHOActivityClassification activities={activities} />
 

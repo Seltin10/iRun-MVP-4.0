@@ -26,8 +26,8 @@ export async function signUp(formData: FormData) {
     const cookieStore = await cookies()
     cookieStore.set("user_session", JSON.stringify(user), {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 60 * 60 * 24 * 7, // 7 days
       path: "/",
     })
@@ -65,8 +65,8 @@ export async function signIn(formData: FormData) {
 
     cookieStore.set("user_session", JSON.stringify(user), {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       maxAge: 60 * 60 * 24 * 7,
       path: "/",
     })

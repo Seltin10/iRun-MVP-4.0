@@ -17,10 +17,11 @@ export async function POST(request: Request) {
 
   const response = NextResponse.json({ success: true, user })
 
+  // Always use secure:true for v0/Vercel (HTTPS), sameSite:none for cross-origin
   response.cookies.set("user_session", JSON.stringify(user), {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
     maxAge: 60 * 60 * 24 * 7,
     path: "/",
   })

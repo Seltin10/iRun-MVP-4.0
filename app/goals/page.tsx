@@ -3,15 +3,53 @@ import { redirect } from "next/navigation"
 import { sql } from "@/lib/db"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { BottomNav } from "@/components/bottom-nav"
-import { GoalCard } from "@/components/goal-card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Suspense } from "react"
+import { MissionCard } from "@/components/mission-card"
+import { WalletHeader } from "@/components/wallet-header"
+import { EcoMilestoneCard } from "@/components/eco-milestone-card"
+import { Button } from "@/components/ui/button"
+import { Gift } from "lucide-react"
+import Link from "next/link"
 
 export default async function GoalsPage() {
   const session = await getSession()
 
   if (!session) {
     redirect("/login")
+  }
+
+  const userStats = await sql`
+    SELECT 
+      COALESCE(SUM(points_earned), 0) as total_points,
+      COALESCE(SUM(co2_saved), 0) as total_co2_saved
+    FROM public.user_activities
+    WHERE user_id = ${session.id}
+  `
+
+  const totalPoints = Number(userStats[0]?.total_points || 450) // Default 450 for demo
+  const totalCO2 = Number(userStats[0]?.total_co2_saved || 15) // Default 15kg for demo
+
+  // Determine ECO+ level based on CO2 saved
+  let ecoLevel = "Bronze"
+  let ecoLevelColor = "text-amber-700"
+  let nextLevelCO2 = 25
+  let nextLevelName = "Nível Prata"
+
+  if (totalCO2 >= 50) {
+    ecoLevel = "Nível Ouro"
+    ecoLevelColor = "text-yellow-500"
+    nextLevelCO2 = 100
+    nextLevelName = "Nível Platina"
+  } else if (totalCO2 >= 25) {
+    ecoLevel = "Nível Prata"
+    ecoLevelColor = "text-slate-400"
+    nextLevelCO2 = 50
+    nextLevelName = "Nível Ouro"
+  } else {
+    ecoLevel = "Nível Bronze"
+    ecoLevelColor = "text-amber-700"
+    nextLevelCO2 = 25
+    nextLevelName = "Nível Prata"
   }
 
   // Get all active goals with user progress
@@ -43,85 +81,48 @@ export default async function GoalsPage() {
   `
 
   const dailyGoals = goalsWithProgress.filter((g: any) => g.goal_type === "daily")
-  const weeklyGoals = goalsWithProgress.filter((g: any) => g.goal_type === "weekly")
-  const monthlyGoals = goalsWithProgress.filter((g: any) => g.goal_type === "monthly")
-  const caloricGoals = goalsWithProgress.filter((g: any) => g.goal_type === "caloric")
 
   return (
     <div className="min-h-screen bg-background pb-20">
       <DashboardHeader user={session} />
       <main className="container mx-auto px-3 py-4 sm:px-4 sm:py-6 space-y-6">
+        <WalletHeader points={totalPoints} ecoLevel={ecoLevel} ecoLevelColor={ecoLevelColor} co2Saved={totalCO2} />
+
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold mb-1">Metas</h1>
+          <h1 className="text-xl sm:text-2xl font-bold mb-1">Hub de Conquistas</h1>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            Complete metas e ganhe cupons de desconto
+            Complete missões e ganhe pontos para trocar por recompensas
           </p>
         </div>
 
-        <Tabs defaultValue="daily" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 h-auto">
-            <TabsTrigger value="daily" className="text-xs sm:text-sm py-2">
-              Diárias
-            </TabsTrigger>
-            <TabsTrigger value="weekly" className="text-xs sm:text-sm py-2">
-              Semanais
-            </TabsTrigger>
-            <TabsTrigger value="monthly" className="text-xs sm:text-sm py-2">
-              Mensais
-            </TabsTrigger>
-            <TabsTrigger value="caloric" className="text-xs sm:text-sm py-2">
-              Calóricas
-            </TabsTrigger>
-          </TabsList>
+        <div className="space-y-4">
+          {dailyGoals.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">Nenhuma missão disponível</p>
+          ) : (
+            <>
+              {dailyGoals.map((goal: any) => (
+                <MissionCard key={goal.id} goal={goal} userPlan={session.plan_type} userId={session.id} />
+              ))}
 
-          <TabsContent value="daily" className="space-y-4 mt-6">
-            {dailyGoals.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">Nenhuma meta diária disponível</p>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {dailyGoals.map((goal: any) => (
-                  <GoalCard key={goal.id} goal={goal} userPlan={session.plan_type} />
-                ))}
-              </div>
-            )}
-          </TabsContent>
+              {/* ECO+ Milestone Card - Card Type 3 */}
+              <EcoMilestoneCard currentCO2={totalCO2} nextLevelCO2={nextLevelCO2} nextLevelName={nextLevelName} />
+            </>
+          )}
+        </div>
 
-          <TabsContent value="weekly" className="space-y-4 mt-6">
-            {weeklyGoals.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">Nenhuma meta semanal disponível</p>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {weeklyGoals.map((goal: any) => (
-                  <GoalCard key={goal.id} goal={goal} userPlan={session.plan_type} />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="monthly" className="space-y-4 mt-6">
-            {monthlyGoals.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">Nenhuma meta mensal disponível</p>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {monthlyGoals.map((goal: any) => (
-                  <GoalCard key={goal.id} goal={goal} userPlan={session.plan_type} />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="caloric" className="space-y-4 mt-6">
-            {caloricGoals.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">Nenhuma meta calórica disponível</p>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {caloricGoals.map((goal: any) => (
-                  <GoalCard key={goal.id} goal={goal} userPlan={session.plan_type} />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+        <div className="fixed bottom-20 left-0 right-0 px-4 pb-4 pointer-events-none">
+          <div className="container mx-auto max-w-md pointer-events-auto">
+            <Link href="/rewards">
+              <Button
+                size="lg"
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg"
+              >
+                <Gift className="mr-2 h-5 w-5" />
+                Ir para o Shopping de Recompensas
+              </Button>
+            </Link>
+          </div>
+        </div>
       </main>
       <Suspense fallback={<div className="fixed bottom-0 left-0 right-0 h-16 bg-white border-t" />}>
         <BottomNav />

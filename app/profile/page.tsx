@@ -10,7 +10,6 @@ import { User, Mail, Calendar, Award, Activity } from "lucide-react"
 import { Suspense } from "react"
 import { AchievementsSection } from "@/components/achievements-section"
 import { FeedbackForm } from "@/components/feedback-form"
-import { RecentActivities } from "@/components/recent-activities"
 
 export default async function ProfilePage() {
   const session = await getSession()
@@ -91,36 +90,6 @@ export default async function ProfilePage() {
     premium: "Premium",
     sports: "iRun Sports",
   }
-
-  const activities = [
-    {
-      id: "1",
-      activity_type: "running",
-      distance_km: 5.2,
-      duration_minutes: 28,
-      calories_burned: 420,
-      date: new Date().toISOString(),
-      source: "strava",
-    },
-    {
-      id: "2",
-      activity_type: "cycling",
-      distance_km: 15.8,
-      duration_minutes: 45,
-      calories_burned: 580,
-      date: new Date(Date.now() - 86400000).toISOString(),
-      source: "apple_health",
-    },
-    {
-      id: "3",
-      activity_type: "swimming",
-      distance_km: 1.2,
-      duration_minutes: 35,
-      calories_burned: 320,
-      date: new Date(Date.now() - 172800000).toISOString(),
-      source: "google_fit",
-    },
-  ]
 
   return (
     <div className="min-h-screen pb-20 bg-indigo-50">
@@ -227,8 +196,6 @@ export default async function ProfilePage() {
             </div>
           </CardContent>
         </Card>
-
-        <RecentActivities activities={activities} />
 
         <AchievementsSection
           totalDistance={Number(userStats.total_distance)}

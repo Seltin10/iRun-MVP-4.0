@@ -3,405 +3,338 @@
 import { useState } from "react"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { BottomNav } from "@/components/bottom-nav"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { WalletPreview } from "@/components/wallet-preview"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Ticket, Medal, Gem } from "lucide-react"
-import Image from "next/image"
+import { Coins, Sparkles } from "lucide-react"
 
-const MOCK_PARTNERS = [
-  // Restaurantes
-  {
-    id: 1,
-    name: "Restaurante Sabor & Saúde",
-    category: "Restaurantes",
-    logo_url: "/restaurant-logo.png",
-    coupon_count: 3,
-    coupons: [
-      { id: 1, type: "percentage", value: 15, description: "15% OFF", tier: "bronze" },
-      { id: 2, type: "fixed", value: 25, description: "R$ 25 OFF", tier: "silver" },
-      { id: 3, type: "percentage", value: 20, description: "20% OFF", tier: "gold" },
-    ],
-  },
-  {
-    id: 2,
-    name: "Pizzaria Bella Napoli",
-    category: "Restaurantes",
-    logo_url: "/pizza-logo.png",
-    coupon_count: 2,
-    coupons: [
-      { id: 1, type: "percentage", value: 10, description: "10% OFF", tier: "bronze" },
-      { id: 2, type: "fixed", value: 30, description: "R$ 30 OFF", tier: "silver" },
-    ],
-  },
-  {
-    id: 3,
-    name: "Café Energia",
-    category: "Restaurantes",
-    logo_url: "/cafe-logo.png",
-    coupon_count: 1,
-    coupons: [{ id: 1, type: "percentage", value: 15, description: "15% OFF", tier: "bronze" }],
-  },
-
-  // Lojas Esportivas
-  {
-    id: 4,
-    name: "SportMax",
-    category: "Lojas Esportivas",
-    logo_url: "/sports-store-logo.png",
-    coupon_count: 5,
-    coupons: [
-      { id: 1, type: "percentage", value: 20, description: "20% OFF", tier: "silver" },
-      { id: 2, type: "fixed", value: 50, description: "R$ 50 OFF", tier: "gold" },
-      { id: 3, type: "percentage", value: 15, description: "15% OFF", tier: "bronze" },
-      { id: 4, type: "fixed", value: 100, description: "R$ 100 OFF", tier: "diamond" },
-      { id: 5, type: "percentage", value: 25, description: "25% OFF", tier: "gold" },
-    ],
-  },
-  {
-    id: 5,
-    name: "Corrida & Cia",
-    category: "Lojas Esportivas",
-    logo_url: "/running-store-logo.jpg",
-    coupon_count: 4,
-    coupons: [
-      { id: 1, type: "percentage", value: 15, description: "15% OFF", tier: "bronze" },
-      { id: 2, type: "fixed", value: 40, description: "R$ 40 OFF", tier: "silver" },
-      { id: 3, type: "percentage", value: 20, description: "20% OFF", tier: "gold" },
-      { id: 4, type: "fixed", value: 60, description: "R$ 60 OFF", tier: "diamond" },
-    ],
-  },
-  {
-    id: 6,
-    name: "Bike Shop Pro",
-    category: "Lojas Esportivas",
-    logo_url: "/bike-shop-logo.jpg",
-    coupon_count: 3,
-    coupons: [
-      { id: 1, type: "percentage", value: 10, description: "10% OFF", tier: "bronze" },
-      { id: 2, type: "fixed", value: 75, description: "R$ 75 OFF", tier: "gold" },
-      { id: 3, type: "percentage", value: 18, description: "18% OFF", tier: "silver" },
-    ],
-  },
-
-  // Roupas e Vestuário
-  {
-    id: 7,
-    name: "Moda Fitness",
-    category: "Roupas e Vestuário",
-    logo_url: "/fitness-clothing-logo.jpg",
-    coupon_count: 6,
-    coupons: [
-      { id: 1, type: "percentage", value: 25, description: "25% OFF", tier: "gold" },
-      { id: 2, type: "fixed", value: 35, description: "R$ 35 OFF", tier: "silver" },
-      { id: 3, type: "percentage", value: 15, description: "15% OFF", tier: "bronze" },
-      { id: 4, type: "fixed", value: 50, description: "R$ 50 OFF", tier: "diamond" },
-      { id: 5, type: "percentage", value: 30, description: "30% OFF", tier: "diamond" },
-      { id: 6, type: "fixed", value: 20, description: "R$ 20 OFF", tier: "bronze" },
-    ],
-  },
-  {
-    id: 8,
-    name: "Active Wear",
-    category: "Roupas e Vestuário",
-    logo_url: "/activewear-logo.jpg",
-    coupon_count: 4,
-    coupons: [
-      { id: 1, type: "percentage", value: 20, description: "20% OFF", tier: "silver" },
-      { id: 2, type: "fixed", value: 45, description: "R$ 45 OFF", tier: "gold" },
-      { id: 3, type: "percentage", value: 15, description: "15% OFF", tier: "bronze" },
-      { id: 4, type: "fixed", value: 30, description: "R$ 30 OFF", tier: "silver" },
-    ],
-  },
-  {
-    id: 9,
-    name: "Estilo Urbano",
-    category: "Roupas e Vestuário",
-    logo_url: "/urban-clothing-logo.jpg",
-    coupon_count: 2,
-    coupons: [
-      { id: 1, type: "percentage", value: 12, description: "12% OFF", tier: "bronze" },
-      { id: 2, type: "fixed", value: 25, description: "R$ 25 OFF", tier: "silver" },
-    ],
-  },
-
-  // Suplementos
-  {
-    id: 10,
-    name: "Nutri Suplementos",
-    category: "Suplementos",
-    logo_url: "/supplements-logo.jpg",
-    coupon_count: 7,
-    coupons: [
-      { id: 1, type: "percentage", value: 20, description: "20% OFF", tier: "silver" },
-      { id: 2, type: "fixed", value: 50, description: "R$ 50 OFF", tier: "gold" },
-      { id: 3, type: "percentage", value: 15, description: "15% OFF", tier: "bronze" },
-      { id: 4, type: "fixed", value: 30, description: "R$ 30 OFF", tier: "silver" },
-      { id: 5, type: "percentage", value: 25, description: "25% OFF", tier: "gold" },
-      { id: 6, type: "fixed", value: 40, description: "R$ 40 OFF", tier: "gold" },
-      { id: 7, type: "percentage", value: 10, description: "10% OFF", tier: "bronze" },
-    ],
-  },
-  {
-    id: 11,
-    name: "Proteína Max",
-    category: "Suplementos",
-    logo_url: "/protein-logo.jpg",
-    coupon_count: 5,
-    coupons: [
-      { id: 1, type: "percentage", value: 18, description: "18% OFF", tier: "silver" },
-      { id: 2, type: "fixed", value: 35, description: "R$ 35 OFF", tier: "silver" },
-      { id: 3, type: "percentage", value: 22, description: "22% OFF", tier: "gold" },
-      { id: 4, type: "fixed", value: 60, description: "R$ 60 OFF", tier: "diamond" },
-      { id: 5, type: "percentage", value: 15, description: "15% OFF", tier: "bronze" },
-    ],
-  },
-  {
-    id: 12,
-    name: "Vita Store",
-    category: "Suplementos",
-    logo_url: "/vitamins-logo.jpg",
-    coupon_count: 3,
-    coupons: [
-      { id: 1, type: "percentage", value: 15, description: "15% OFF", tier: "bronze" },
-      { id: 2, type: "fixed", value: 25, description: "R$ 25 OFF", tier: "silver" },
-      { id: 3, type: "percentage", value: 20, description: "20% OFF", tier: "gold" },
-    ],
-  },
-
-  // Eventos
-  {
-    id: 13,
-    name: "Maratona São Paulo",
-    category: "Eventos",
-    logo_url: "/marathon-logo.png",
-    coupon_count: 2,
-    coupons: [
-      { id: 1, type: "percentage", value: 10, description: "10% OFF", tier: "bronze" },
-      { id: 2, type: "fixed", value: 50, description: "R$ 50 OFF", tier: "gold" },
-    ],
-  },
-  {
-    id: 14,
-    name: "Corrida das Cores",
-    category: "Eventos",
-    logo_url: "/color-run-logo.jpg",
-    coupon_count: 1,
-    coupons: [{ id: 1, type: "percentage", value: 15, description: "15% OFF", tier: "silver" }],
-  },
-  {
-    id: 15,
-    name: "Triathlon Brasil",
-    category: "Eventos",
-    logo_url: "/triathlon-logo.jpg",
-    coupon_count: 2,
-    coupons: [
-      { id: 1, type: "percentage", value: 12, description: "12% OFF", tier: "bronze" },
-      { id: 2, type: "fixed", value: 40, description: "R$ 40 OFF", tier: "diamond" },
-    ],
-  },
-
-  // Serviços Gerais
-  {
-    id: 16,
-    name: "Personal Trainer Online",
-    category: "Serviços Gerais",
-    logo_url: "/personal-trainer-logo.jpg",
-    coupon_count: 4,
-    coupons: [
-      { id: 1, type: "percentage", value: 20, description: "20% OFF", tier: "silver" },
-      { id: 2, type: "fixed", value: 100, description: "R$ 100 OFF", tier: "diamond" },
-      { id: 3, type: "percentage", value: 15, description: "15% OFF", tier: "bronze" },
-      { id: 4, type: "fixed", value: 50, description: "R$ 50 OFF", tier: "gold" },
-    ],
-  },
-  {
-    id: 17,
-    name: "Fisioterapia Esportiva",
-    category: "Serviços Gerais",
-    logo_url: "/physiotherapy-logo.jpg",
-    coupon_count: 3,
-    coupons: [
-      { id: 1, type: "percentage", value: 15, description: "15% OFF", tier: "bronze" },
-      { id: 2, type: "fixed", value: 60, description: "R$ 60 OFF", tier: "gold" },
-      { id: 3, type: "percentage", value: 25, description: "25% OFF", tier: "diamond" },
-    ],
-  },
-  {
-    id: 18,
-    name: "Nutricionista Fit",
-    category: "Serviços Gerais",
-    logo_url: "/nutritionist-logo.jpg",
-    coupon_count: 2,
-    coupons: [
-      { id: 1, type: "percentage", value: 10, description: "10% OFF", tier: "bronze" },
-      { id: 2, type: "fixed", value: 40, description: "R$ 40 OFF", tier: "silver" },
-    ],
-  },
-
-  // Saúde e Beleza
-  {
-    id: 19,
-    name: "Spa Relaxamento",
-    category: "Saúde e Beleza",
-    logo_url: "/spa-logo.png",
-    coupon_count: 5,
-    coupons: [
-      { id: 1, type: "percentage", value: 20, description: "20% OFF", tier: "silver" },
-      { id: 2, type: "fixed", value: 80, description: "R$ 80 OFF", tier: "diamond" },
-      { id: 3, type: "percentage", value: 15, description: "15% OFF", tier: "bronze" },
-      { id: 4, type: "fixed", value: 50, description: "R$ 50 OFF", tier: "gold" },
-      { id: 5, type: "percentage", value: 25, description: "25% OFF", tier: "gold" },
-    ],
-  },
-  {
-    id: 20,
-    name: "Clínica Estética Corpo Perfeito",
-    category: "Saúde e Beleza",
-    logo_url: "/aesthetic-clinic-logo.jpg",
-    coupon_count: 4,
-    coupons: [
-      { id: 1, type: "percentage", value: 18, description: "18% OFF", tier: "silver" },
-      { id: 2, type: "fixed", value: 100, description: "R$ 100 OFF", tier: "diamond" },
-      { id: 3, type: "percentage", value: 22, description: "22% OFF", tier: "gold" },
-      { id: 4, type: "fixed", value: 70, description: "R$ 70 OFF", tier: "gold" },
-    ],
-  },
-  {
-    id: 21,
-    name: "Massagem Terapêutica",
-    category: "Saúde e Beleza",
-    logo_url: "/massage-logo.jpg",
-    coupon_count: 3,
-    coupons: [
-      { id: 1, type: "percentage", value: 15, description: "15% OFF", tier: "bronze" },
-      { id: 2, type: "fixed", value: 45, description: "R$ 45 OFF", tier: "silver" },
-      { id: 3, type: "percentage", value: 20, description: "20% OFF", tier: "gold" },
-    ],
-  },
-]
-
-const CATEGORIES = [
-  "Todos",
-  "Restaurantes",
-  "Lojas Esportivas",
-  "Roupas e Vestuário",
-  "Suplementos",
-  "Eventos",
-  "Serviços Gerais",
-  "Saúde e Beleza",
-]
-
-const getTierInfo = (tier: string) => {
-  switch (tier) {
-    case "bronze":
-      return { color: "text-amber-700", bgColor: "bg-amber-50 border-amber-200", label: "Bronze", icon: Medal }
-    case "silver":
-      return { color: "text-gray-600", bgColor: "bg-gray-50 border-gray-200", label: "Prata", icon: Medal }
-    case "gold":
-      return { color: "text-yellow-600", bgColor: "bg-yellow-50 border-yellow-200", label: "Ouro", icon: Medal }
-    case "diamond":
-      return { color: "text-cyan-600", bgColor: "bg-cyan-50 border-cyan-200", label: "Diamante", icon: Gem }
-    default:
-      return { color: "text-gray-600", bgColor: "bg-gray-50 border-gray-200", label: "Bronze", icon: Medal }
-  }
+const REWARDS_DATA = {
+  "Para Agora": [
+    {
+      id: 1,
+      name: "Café Energia",
+      category: "Restaurante",
+      categoryColor: "bg-orange-500",
+      item: "Espresso Grátis",
+      points: 30,
+      badge: "blue",
+      subtext: "Válido por 24h após resgate",
+      placeholderColor: "8B4513",
+    },
+    {
+      id: 2,
+      name: "Sabor & Saúde",
+      category: "Restaurante",
+      categoryColor: "bg-orange-500",
+      item: "10% OFF no Almoço",
+      points: 50,
+      badge: "blue",
+      subtext: "Lim. 1x por dia",
+      placeholderColor: "7CB342",
+    },
+    {
+      id: 3,
+      name: "SportMax",
+      category: "Lojas",
+      categoryColor: "bg-blue-600",
+      item: "Dose Whey Protein",
+      points: 80,
+      badge: "blue",
+      subtext: "Produto premium",
+      placeholderColor: "1976D2",
+    },
+  ],
+  "Benefícios Exclusivos": [
+    {
+      id: 4,
+      name: "Pizzaria Bella Napoli",
+      category: "Restaurante",
+      categoryColor: "bg-orange-500",
+      item: "10% OFF no Rodízio",
+      points: 150,
+      badge: "purple",
+      subtext: "Válido finais de semana",
+      placeholderColor: "D32F2F",
+    },
+    {
+      id: 5,
+      name: "Zen Yoga",
+      category: "Saúde",
+      categoryColor: "bg-green-600",
+      item: "Aula Experimental",
+      points: 150,
+      badge: "purple",
+      subtext: "Reserve com antecedência",
+      placeholderColor: "00897B",
+    },
+    {
+      id: 6,
+      name: "Acqua Gym",
+      category: "Saúde",
+      categoryColor: "bg-green-600",
+      item: "Day Pass (Piscina)",
+      points: 100,
+      badge: "purple",
+      subtext: "Válido de Seg-Sex",
+      placeholderColor: "0288D1",
+    },
+    {
+      id: 7,
+      name: "SportMax",
+      category: "Lojas",
+      categoryColor: "bg-blue-600",
+      item: "20% OFF em Roupas",
+      points: 200,
+      badge: "purple",
+      subtext: "Uso único",
+      placeholderColor: "303F9F",
+    },
+  ],
+  "Experiências VIP": [
+    {
+      id: 8,
+      name: "Bike Fix",
+      category: "Serviço",
+      categoryColor: "bg-purple-600",
+      item: "Regulagem de Freio",
+      points: 300,
+      badge: "gold",
+      subtext: "Agende com antecedência",
+      placeholderColor: "5E35B1",
+    },
+    {
+      id: 9,
+      name: "Spa Relaxamento",
+      category: "Saúde",
+      categoryColor: "bg-green-600",
+      item: "Massagem 50min",
+      points: 500,
+      badge: "gold",
+      subtext: "Agende com antecedência",
+      placeholderColor: "C2185B",
+    },
+    {
+      id: 10,
+      name: "Green Market",
+      category: "Alimentação",
+      categoryColor: "bg-emerald-600",
+      item: "Cesta Orgânica",
+      points: 500,
+      badge: "gold",
+      subtext: "Frutas e verduras frescas",
+      placeholderColor: "388E3C",
+    },
+    {
+      id: 11,
+      name: "Nike Store",
+      category: "Lojas",
+      categoryColor: "bg-blue-600",
+      item: "30% OFF em Tênis",
+      points: 800,
+      badge: "gold",
+      subtext: "Produtos selecionados",
+      placeholderColor: "212121",
+    },
+  ],
+  Planos: [
+    {
+      id: 12,
+      name: "iRun Club Premium",
+      category: "Assinatura",
+      categoryColor: "bg-indigo-600",
+      item: "1 Mês de Acesso Premium",
+      points: 1000,
+      badge: "gold",
+      subtext: "Benefícios exclusivos + 2x pontos",
+      placeholderColor: "FFB300",
+    },
+  ],
 }
 
-export default function PartnersPage() {
-  const [selectedCategory, setSelectedCategory] = useState("Todos")
+const FEATURED_OFFERS = [
+  {
+    id: 101,
+    name: "Café Energia",
+    category: "Restaurante",
+    categoryColor: "bg-orange-500",
+    item: "Espresso Grátis",
+    points: 30,
+    placeholderColor: "8B4513",
+    featured: true,
+  },
+  {
+    id: 102,
+    name: "SportMax",
+    category: "Lojas",
+    categoryColor: "bg-blue-600",
+    item: "Dose Whey Protein",
+    points: 80,
+    placeholderColor: "1976D2",
+    featured: true,
+  },
+  {
+    id: 103,
+    name: "Green Market",
+    category: "Alimentação",
+    categoryColor: "bg-emerald-600",
+    item: "Cesta Orgânica",
+    points: 500,
+    placeholderColor: "388E3C",
+    featured: true,
+  },
+]
 
-  const filteredPartners =
-    selectedCategory === "Todos" ? MOCK_PARTNERS : MOCK_PARTNERS.filter((p) => p.category === selectedCategory)
+const USER_POINTS = 450
+
+export default function PartnersPage() {
+  const [selectedCollection, setSelectedCollection] = useState<keyof typeof REWARDS_DATA>("Para Agora")
+
+  const collections = Object.keys(REWARDS_DATA) as Array<keyof typeof REWARDS_DATA>
+  const currentRewards = REWARDS_DATA[selectedCollection]
 
   return (
     <div className="min-h-screen pb-20 bg-indigo-50">
       <DashboardHeader user={{ name: "Usuário" }} />
       <main className="container mx-auto px-3 py-4 sm:px-4 sm:py-6 space-y-6">
-        <div>
-          <h1 className="text-xl sm:text-2xl mb-1 font-normal">Parceiros</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            Conheça nossos parceiros e os cupons disponíveis
-          </p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <h1 className="text-xl sm:text-2xl mb-1 font-semibold">Shopping de Trocas</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Escolha recompensas para sua rotina ou experiências VIP
+            </p>
+            <div className="mt-2">
+              <Badge variant="outline" className="text-xs font-semibold bg-blue-50 text-blue-700 border-blue-300">
+                <Coins className="h-3 w-3 mr-1" />
+                {USER_POINTS} Pontos Disponíveis
+              </Badge>
+            </div>
+          </div>
+          <WalletPreview />
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-yellow-600" />
+            <h2 className="text-sm font-semibold text-gray-900">Em Destaque</h2>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0">
+            {FEATURED_OFFERS.map((offer) => {
+              const canAfford = USER_POINTS >= offer.points
+              return (
+                <Card
+                  key={offer.id}
+                  className="flex-shrink-0 w-[200px] overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1 border-2 border-yellow-200"
+                >
+                  <div
+                    className="relative aspect-[4/3] overflow-hidden"
+                    style={{ backgroundColor: `#${offer.placeholderColor}` }}
+                  >
+                    <div className="w-full h-full flex items-center justify-center text-white/20 text-xs font-medium">
+                      {offer.item}
+                    </div>
+                    <Badge className={`absolute top-2 left-2 text-[10px] ${offer.categoryColor} text-white border-0`}>
+                      {offer.category}
+                    </Badge>
+                    <div className="absolute top-2 right-2">
+                      <Sparkles className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                    </div>
+                  </div>
+                  <CardContent className="p-3 space-y-2">
+                    <div>
+                      <h3 className="text-sm font-bold text-gray-900 leading-tight">{offer.item}</h3>
+                      <p className="text-xs text-gray-600 mt-0.5">{offer.name}</p>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <Badge
+                        variant="secondary"
+                        className={`text-xs font-bold ${
+                          canAfford ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        {offer.points} Pts
+                      </Badge>
+                      <Button size="sm" disabled={!canAfford} className="h-7 text-xs px-3">
+                        Resgatar
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
         </div>
 
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          {CATEGORIES.map((category) => (
+          {collections.map((collection) => (
             <Button
-              key={category}
-              variant={selectedCategory === category ? "default" : "outline"}
+              key={collection}
+              variant={selectedCollection === collection ? "default" : "outline"}
               size="sm"
-              onClick={() => setSelectedCategory(category)}
-              className="whitespace-nowrap text-xs"
+              onClick={() => setSelectedCollection(collection)}
+              className="whitespace-nowrap text-xs rounded-full px-4"
             >
-              {category}
+              {collection}
             </Button>
           ))}
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredPartners.map((partner) => (
-            <Card key={partner.id} className="overflow-hidden">
-              <CardHeader className="pb-3">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0">
-                    <Image
-                      src={partner.logo_url || "/placeholder.svg"}
-                      alt={partner.name}
-                      width={56}
-                      height={56}
-                      className="rounded-lg object-contain"
-                      unoptimized
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <CardTitle className="text-base leading-tight">{partner.name}</CardTitle>
-                    <CardDescription className="mt-1 text-xs">{partner.category}</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Ticket className="h-3.5 w-3.5" />
-                    <span>Cupons disponíveis:</span>
-                  </div>
-                  <div className="space-y-2">
-                    {partner.coupons.map((coupon) => {
-                      const tierInfo = getTierInfo(coupon.tier)
-                      const TierIcon = tierInfo.icon
-                      return (
-                        <div key={coupon.id} className="flex items-center justify-between gap-2">
-                          <Badge
-                            variant={coupon.type === "percentage" ? "default" : "secondary"}
-                            className="text-xs font-semibold"
-                          >
-                            {coupon.description}
-                          </Badge>
-                          <div
-                            className={`flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-medium ${tierInfo.bgColor} ${tierInfo.color}`}
-                          >
-                            <TierIcon className="h-3 w-3" />
-                            <span>{tierInfo.label}</span>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+          {currentRewards.map((reward) => {
+            const canAfford = USER_POINTS >= reward.points
 
-                <div className="flex items-center justify-between pt-2 border-t">
-                  <span className="text-xs text-muted-foreground">Total de cupons</span>
-                  <Badge variant="outline" className="font-semibold text-xs">
-                    {partner.coupon_count}
+            return (
+              <Card key={reward.id} className="overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1">
+                <div
+                  className="relative aspect-[4/3] overflow-hidden"
+                  style={{ backgroundColor: `#${reward.placeholderColor}` }}
+                >
+                  <div className="w-full h-full flex items-center justify-center text-white/20 text-xs font-medium p-2 text-center">
+                    {reward.item}
+                  </div>
+                  <Badge className={`absolute top-2 left-2 text-[10px] ${reward.categoryColor} text-white border-0`}>
+                    {reward.category}
                   </Badge>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
 
-          {filteredPartners.length === 0 && (
+                <CardContent className="p-3 space-y-2">
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 leading-tight">{reward.item}</h3>
+                    <p className="text-xs text-gray-600 mt-0.5">{reward.name}</p>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground line-clamp-1">{reward.subtext}</p>
+
+                  <div className="flex items-center justify-between gap-2 pt-1">
+                    <Badge
+                      variant="secondary"
+                      className={`text-xs font-bold flex-shrink-0 ${
+                        reward.badge === "blue"
+                          ? "bg-blue-100 text-blue-700"
+                          : reward.badge === "purple"
+                            ? "bg-purple-100 text-purple-700"
+                            : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      {reward.points} Pts
+                    </Badge>
+                    <Button
+                      size="sm"
+                      disabled={!canAfford}
+                      className={`h-7 text-xs px-3 flex-1 ${
+                        !canAfford ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+                      }`}
+                    >
+                      {!canAfford ? "Insuf." : "Resgatar"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
+
+          {currentRewards.length === 0 && (
             <div className="col-span-full text-center py-12">
-              <p className="text-sm text-muted-foreground">Nenhum parceiro disponível nesta categoria</p>
+              <p className="text-sm text-muted-foreground">Nenhuma recompensa disponível nesta coleção</p>
             </div>
           )}
         </div>

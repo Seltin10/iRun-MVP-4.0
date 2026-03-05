@@ -1,13 +1,16 @@
 import { getSession } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { DashboardHeader } from "@/components/dashboard-header"
-import { StatsCards } from "@/components/stats-cards"
+import { RecentActivities } from "@/components/recent-activities"
 import { BottomNav } from "@/components/bottom-nav"
 import { PartnerAdsBanner } from "@/components/partner-ads-banner"
 import { RewardStatsCards } from "@/components/reward-stats-cards"
 import { EcoCalculator } from "@/components/eco-calculator"
-import { getRewardStats } from "@/lib/reward-stats" // Import reward stats function
 import { WHOActivityClassification } from "@/components/who-activity-classification"
+import { AchievementsTopDashboard } from "@/components/achievements-top-dashboard"
+import { OpportunityCards } from "@/components/opportunity-cards"
+import { DailyPassiveEarning } from "@/components/daily-passive-earning"
+import { getRewardStats } from "@/lib/reward-stats"
 
 export default async function DashboardPage() {
   const session = await getSession()
@@ -92,7 +95,7 @@ export default async function DashboardPage() {
   const rewardStats = await getRewardStats(session.id)
 
   return (
-    <div className="min-h-screen pb-20 bg-indigo-50">
+    <div className="min-h-screen pb-32 bg-indigo-50">
       <DashboardHeader user={session} />
       <main className="container mx-auto px-3 py-4 sm:px-4 sm:py-6 space-y-6">
         <div className="pt-2">
@@ -104,13 +107,19 @@ export default async function DashboardPage() {
         <PartnerAdsBanner partners={partners} />
 
         <div>
-          <h1 className="sm:text-2xl mb-1 text-xl leading-5 font-normal">Minhas Metas</h1>
+          <h1 className="sm:text-2xl mb-1 text-xl leading-5 font-normal">Central de Conquistas</h1>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            Sincronizado via Apple Health, Google Fit e Strava
+            Ganhe pontos e troque por recompensas
           </p>
         </div>
 
-        <StatsCards stats={goalStats} />
+        <AchievementsTopDashboard />
+
+        <DailyPassiveEarning />
+
+        <OpportunityCards />
+
+        <RecentActivities activities={activities} />
 
         <WHOActivityClassification activities={activities} />
 
@@ -118,6 +127,7 @@ export default async function DashboardPage() {
 
         <EcoCalculator totalRunning={goalStats.total_running} totalCycling={goalStats.total_cycling} />
       </main>
+
       <BottomNav />
     </div>
   )

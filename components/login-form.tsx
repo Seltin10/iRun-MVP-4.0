@@ -27,7 +27,6 @@ export function LoginForm() {
     const password = formData.get("password") as string
 
     try {
-      console.log("[v0] Making login request...")
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -35,20 +34,16 @@ export function LoginForm() {
         credentials: "include",
       })
 
-      console.log("[v0] Login response status:", res.status)
       const result = await res.json()
-      console.log("[v0] Login result:", result)
 
       if (result?.error) {
         setError(result.error)
         setLoading(false)
       } else if (result?.success) {
-        console.log("[v0] Login successful, refreshing and redirecting...")
         router.refresh()
         router.push("/dashboard")
       }
-    } catch (err) {
-      console.error("[v0] Login error:", err)
+    } catch {
       setError("Erro ao fazer login")
       setLoading(false)
     }

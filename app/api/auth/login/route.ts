@@ -17,11 +17,11 @@ export async function POST(request: Request) {
 
   const response = NextResponse.json({ success: true, user })
 
-  // Always use secure:true for v0/Vercel (HTTPS), sameSite:none for cross-origin
+  // Use httpOnly:false for v0 iframe compatibility
   response.cookies.set("user_session", JSON.stringify(user), {
-    httpOnly: true,
+    httpOnly: false,
     secure: true,
-    sameSite: "none",
+    sameSite: "lax",
     maxAge: 60 * 60 * 24 * 7,
     path: "/",
   })

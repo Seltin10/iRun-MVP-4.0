@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useState } from "react"
-import { signIn } from "@/lib/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -23,18 +22,30 @@ export function LoginForm() {
     setError("")
     setLoading(true)
 
-    console.log("[v0] Form submitted")
-
     const formData = new FormData(e.currentTarget)
-    const result = await signIn(formData)
+    const email = formData.get("email") as string
+    const password = formData.get("password") as string
 
-    if (result?.error) {
-      setError(result.error)
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      })
+
+      const result = await res.json()
+
+      if (result?.error) {
+        setError(result.error)
+        setLoading(false)
+      } else if (result?.success) {
+        router.refresh()
+        router.push("/dashboard")
+      }
+    } catch {
+      setError("Erro ao fazer login")
       setLoading(false)
-    } else if (result?.success) {
-      console.log("[v0] Login successful, redirecting...")
-      // Use window.location for hard navigation to ensure cookies are sent
-      window.location.href = "/dashboard"
     }
   }
 

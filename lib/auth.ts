@@ -25,8 +25,9 @@ export async function signUp(formData: FormData) {
     // Set session cookie
     const cookieStore = await cookies()
     cookieStore.set("user_session", JSON.stringify(user), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      httpOnly: false,
+      secure: true,
+      sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7, // 7 days
       path: "/",
     })
@@ -42,10 +43,7 @@ export async function signIn(formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
 
-  console.log("[v0] SignIn attempt with email:", email)
-
   if (!email || !password) {
-    console.log("[v0] Missing email or password")
     return { error: "Email e senha são obrigatórios" }
   }
 
@@ -57,23 +55,16 @@ export async function signIn(formData: FormData) {
     lgpd_consent: true,
   }
 
-  console.log("[v0] Creating session for user:", user)
-
   try {
     const cookieStore = await cookies()
 
     cookieStore.set("user_session", JSON.stringify(user), {
-      httpOnly: true,
-      secure: false,
+      httpOnly: false,
+      secure: true,
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7,
       path: "/",
     })
-
-    console.log("[v0] Cookie set successfully")
-
-    const verifySession = cookieStore.get("user_session")
-    console.log("[v0] Verification - Cookie value:", verifySession?.value)
 
     return { success: true, user }
   } catch (error) {
@@ -93,16 +84,12 @@ export async function getSession() {
   const session = cookieStore.get("user_session")
 
   if (!session) {
-    console.log("[v0] No session found")
     return null
   }
 
   try {
-    const parsedSession = JSON.parse(session.value)
-    console.log("[v0] Session found for:", parsedSession.email)
-    return parsedSession
+    return JSON.parse(session.value)
   } catch {
-    console.log("[v0] Error parsing session")
     return null
   }
 }
